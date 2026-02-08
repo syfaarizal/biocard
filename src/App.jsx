@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Home, Star, Camera, Briefcase, BarChart2, Grid, Settings, 
-  Play, SkipBack, SkipForward, MapPin, Calendar, Heart, 
+  Home, Star, Camera, Briefcase, BarChart2, Settings, 
+  Play, SkipForward, MapPin, Calendar, Heart, 
   Share2, ArrowLeft, Copy, Check, Music, User, Edit3,
-  Instagram, Twitter, Youtube, Facebook, Link as LinkIcon, Video
+  Instagram, Twitter, Youtube, Link as LinkIcon, Video
 } from 'lucide-react';
 
 // --- Default Data ---
@@ -100,6 +100,11 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
+  const handleEditClick = () => {
+    setViewMode('edit');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const copyLink = () => {
     const fakeUrl = `biocard.app/${data.username}`;
     navigator.clipboard.writeText(fakeUrl);
@@ -136,9 +141,8 @@ export default function App() {
   const BioCard = () => (
     <div className="w-full max-w-5xl mx-auto bg-gray-50 rounded-[20px] md:rounded-[40px] shadow-2xl overflow-hidden p-3 md:p-6 font-sans text-gray-800 transition-all duration-500">
       
-      {/* Top Navigation */}
       <div className="flex flex-wrap justify-between items-center mb-4 px-2 gap-2">
-        <div className="text-xl md:text-2xl font-black italic tracking-tighter text-gray-800">SCD</div>
+        <div className="text-xl md:text-2xl font-black italic tracking-tighter text-gray-800">ZR</div>
         <div className="flex gap-2 md:gap-4 overflow-x-auto no-scrollbar">
           <div className="bg-white px-3 py-1.5 md:px-4 md:py-2 rounded-full shadow-sm text-[10px] md:text-xs font-bold text-gray-500 flex items-center gap-2 whitespace-nowrap">
             <ArrowLeft size={12} /> Back
@@ -153,19 +157,16 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main Grid Layout - Mobile: Flex Col, Desktop: Grid */}
       <div className="flex flex-col lg:grid lg:grid-cols-[80px_1fr_300px] xl:grid-cols-[80px_1fr_320px] gap-4 md:gap-6 min-h-[500px]">
         
-        {/* Navigation / Social Bar (Sidebar on Desktop, Bottom Bar on Mobile) */}
-        <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-3 px-4 lg:py-6 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-3xl overflow-x-auto">
-          {/* Static Nav Icons (Hidden on small mobile if too crowded, or just flexed) */}
+        <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-3 px-4 lg:py-6 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-3xl overflow-x-auto lg:overflow-hidden">
           <div className="flex lg:flex-col gap-4 md:gap-8 text-gray-400 mr-8 lg:mr-0">
             <Home className="hover:text-gray-800 cursor-pointer transition-colors" size={20} />
             <div className={`hidden lg:block relative ${theme.text}`}>
               <Star fill="currentColor" size={20} />
               <div className={`absolute -right-3 top-1/2 -translate-y-1/2 w-1 h-8 ${theme.primary} rounded-full`}></div>
             </div>
-            {/* Social Media Links Rendering */}
+
             <div className="flex lg:flex-col gap-4 border-l lg:border-l-0 lg:border-t border-gray-300 pl-4 lg:pl-0 lg:pt-4">
               {data.instagram && <SocialIcon type="instagram" url={data.instagram} />}
               {data.tiktok && <SocialIcon type="tiktok" url={data.tiktok} />}
@@ -174,17 +175,25 @@ export default function App() {
             </div>
           </div>
           
-          <div className="hidden lg:flex flex-col gap-6 text-gray-400">
+          <div className="hidden lg:flex flex-col gap-6 text-gray-400 items-center pb-2">
              <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm">
                 <img src={data.secondaryImage} alt="mini" className="w-full h-full object-cover" />
              </div>
-             <Settings size={20} />
+             
+             <button 
+               onClick={handleEditClick}
+               className={`group relative p-2.5 rounded-xl transition-all hover:bg-white hover:shadow-md cursor-pointer ${theme.hover} ${viewMode === 'edit' ? theme.text : 'text-gray-400'}`}
+               aria-label="Edit Profile"
+             >
+                <Settings size={20} />
+                <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-gray-800 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                  Edit Profile
+                </div>
+             </button>
           </div>
         </div>
 
-        {/* Center Hero Section */}
         <div className="order-1 lg:order-2 relative rounded-[24px] md:rounded-[30px] overflow-hidden group min-h-[400px] md:min-h-auto">
-          {/* Background Image */}
           <div className="absolute inset-0 bg-gray-200">
              <img 
                src={data.heroImage} 
@@ -194,18 +203,13 @@ export default function App() {
              />
           </div>
           
-          {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
 
-          {/* Floating Info Elements */}
-          
-          {/* Real Name - Repositioned for mobile */}
           <div className="absolute top-4 left-4 md:top-auto md:bottom-32 md:left-8 bg-white/90 backdrop-blur-md px-4 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl shadow-lg border border-white/50 max-w-[150px] md:max-w-[200px]">
              <div className="text-[9px] md:text-[10px] uppercase text-gray-500 font-bold tracking-widest mb-0.5">Real Name</div>
              <div className="text-xs md:text-sm font-bold text-gray-800 leading-tight">{data.realName}</div>
           </div>
 
-          {/* Birthday Stats */}
           <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8">
              <div className="text-[10px] md:text-xs text-gray-300 font-medium mb-1">Birthday</div>
              <div className="flex items-baseline gap-2 text-white drop-shadow-md">
@@ -217,12 +221,10 @@ export default function App() {
              </div>
           </div>
 
-          {/* Heart Button */}
           <div className={`absolute top-4 right-4 md:top-auto md:bottom-8 md:right-24 w-10 h-10 md:w-14 md:h-14 ${theme.primary} rounded-full flex items-center justify-center text-white shadow-xl cursor-pointer hover:scale-110 transition-transform z-10`}>
              <Heart fill="currentColor" size={20} className="md:w-6 md:h-6" />
           </div>
 
-          {/* Name Tag */}
           <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 w-40 md:w-48 bg-white/20 backdrop-blur-md rounded-2xl p-3 md:p-4 border border-white/30 text-white">
              <h1 className="text-2xl md:text-3xl font-black italic leading-none drop-shadow-lg uppercase break-words">
                {data.username}
@@ -241,10 +243,8 @@ export default function App() {
           </div>
         </div>
 
-        {/* Right Sidebar / Widgets - Mobile: Stacked below hero */}
         <div className="order-2 lg:order-3 flex flex-col gap-3 md:gap-5">
           
-          {/* Location & Tags */}
           <div className="bg-white rounded-[24px] md:rounded-3xl p-4 md:p-5 shadow-sm border border-gray-100">
              <div className="flex items-start justify-between mb-3 md:mb-4">
                 <span className="font-bold text-gray-800 text-base md:text-lg">Hometown</span>
@@ -260,7 +260,6 @@ export default function App() {
              </div>
           </div>
 
-          {/* Music Widget */}
           <div className="bg-white rounded-[24px] md:rounded-3xl p-4 md:p-5 shadow-sm border border-gray-100 flex flex-col items-center text-center">
              <div className="w-full flex items-center gap-4">
                 <div className={`w-14 h-14 md:w-16 md:h-16 flex-shrink-0 bg-gray-200 rounded-xl md:rounded-2xl relative overflow-hidden group`}>
@@ -270,7 +269,6 @@ export default function App() {
                 <div className="flex-1 text-left overflow-hidden">
                    <div className="text-xs md:text-sm font-bold text-gray-800 truncate">Now Playing</div>
                    <div className="text-[10px] md:text-xs text-gray-400 truncate">{data.songTitle || 'Select a song'}</div>
-                   {/* Fake Waveform */}
                    <div className="flex items-center gap-0.5 h-3 md:h-4 w-full mt-2 opacity-50">
                      {[...Array(12)].map((_, i) => (
                        <div key={i} className={`w-0.5 md:w-1 rounded-full ${theme.primary}`} style={{height: `${30 + Math.random() * 70}%`}}></div>
@@ -283,7 +281,6 @@ export default function App() {
              </div>
           </div>
 
-          {/* Years Active & Small Media Grid */}
           <div className="grid grid-cols-2 gap-3 md:gap-5 flex-1">
              <div className="bg-white rounded-[24px] md:rounded-3xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between h-full">
                 <div className="text-[10px] md:text-xs text-gray-400 font-bold">Active Since</div>
@@ -309,7 +306,6 @@ export default function App() {
     return (
       <div className="min-h-screen bg-gray-200 p-2 md:p-8 font-sans">
         
-        {/* Editor Header */}
         <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-6 md:mb-8 gap-4 pt-4 md:pt-0">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 ${theme.primary} rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md`}>B</div>
@@ -335,7 +331,6 @@ export default function App() {
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[400px_1fr] gap-8 pb-10">
           
-          {/* Editor Form Panel */}
           <div className="bg-white rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-xl h-fit order-2 xl:order-1">
             <div className="flex items-center gap-2 mb-6 border-b pb-4">
               <div className={`p-2 rounded-lg ${theme.soft}`}>
@@ -346,7 +341,6 @@ export default function App() {
             
             <div className="space-y-6">
               
-              {/* Theme Selector */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Theme Color</label>
                 <div className="flex flex-wrap gap-3">
@@ -363,7 +357,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Social Media Section */}
               <div className="space-y-4">
                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Social Media (Links)</label>
                  <div className="grid grid-cols-1 gap-3">
@@ -386,7 +379,6 @@ export default function App() {
                  </div>
               </div>
 
-              {/* Identity Section */}
               <div className="space-y-4 pt-4 border-t">
                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Identity</label>
                  <div className="grid grid-cols-2 gap-4">
@@ -396,11 +388,19 @@ export default function App() {
                  <input name="realName" value={data.realName} onChange={handleInputChange} placeholder="Full Real Name" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
               </div>
 
-              {/* Details Section */}
               <div className="space-y-4">
                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Details</label>
                  <input name="hometown" value={data.hometown} onChange={handleInputChange} placeholder="Hometown" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
                  <input name="tags" value={data.tags} onChange={handleInputChange} placeholder="Tags (comma separated)" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                 
+                 <input 
+                    name="yearsActiveStart" 
+                    value={data.yearsActiveStart} 
+                    onChange={handleInputChange} 
+                    placeholder="Active Since (Year)" 
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" 
+                 />
+
                  <div className="grid grid-cols-3 gap-2">
                     <input name="birthdayDay" value={data.birthdayDay} onChange={handleInputChange} placeholder="DD" className="bg-gray-50 border rounded-xl px-3 py-2 text-sm text-center"/>
                     <input name="birthdayMonth" value={data.birthdayMonth} onChange={handleInputChange} placeholder="Month" className="bg-gray-50 border rounded-xl px-3 py-2 text-sm text-center"/>
@@ -408,7 +408,6 @@ export default function App() {
                  </div>
               </div>
 
-              {/* Images Section */}
               <div className="space-y-4">
                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Images (URL)</label>
                  <input name="heroImage" value={data.heroImage} onChange={handleInputChange} placeholder="Main Photo URL" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
@@ -418,7 +417,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Live Preview Panel */}
           <div className="order-1 xl:order-2">
              <div className="sticky top-8 space-y-4">
                <div className="flex items-center justify-between px-2">
@@ -461,11 +459,9 @@ export default function App() {
          </div>
       </div>
 
-      {/* The Result Card */}
       <div className="w-full md:max-w-5xl bg-gray-100 md:rounded-b-xl p-4 md:p-8 shadow-2xl min-h-screen md:min-h-0">
          <BioCard />
          
-         {/* Footer Actions */}
          <div className="mt-12 mb-8 flex flex-col md:flex-row justify-center gap-4">
             <button 
               onClick={() => setViewMode('edit')}
