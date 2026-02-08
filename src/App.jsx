@@ -3,8 +3,36 @@ import {
   Home, Star, Camera, Briefcase, BarChart2, Settings, 
   Play, SkipForward, MapPin, Calendar, Heart, 
   Share2, ArrowLeft, Copy, Check, Music, User, Edit3,
-  Instagram, Twitter, Youtube, Link as LinkIcon, Video
+  Instagram, Youtube, Link as LinkIcon
 } from 'lucide-react';
+
+// Logo X (Twitter)
+const IconBrandX = ({ size = 20, className }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    width={size} 
+    height={size} 
+    fill="currentColor" 
+    className={className}
+    aria-label="X (Twitter)"
+  >
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+// Logo TikTok
+const IconBrandTikTok = ({ size = 20, className }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    width={size} 
+    height={size} 
+    fill="currentColor" 
+    className={className}
+    aria-label="TikTok"
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+  </svg>
+);
 
 // --- Default Data ---
 const INITIAL_DATA = {
@@ -118,21 +146,31 @@ export default function App() {
   const SocialIcon = ({ type, url }) => {
     if (!url) return null;
     
-    let Icon = LinkIcon;
-    if (type === 'instagram') Icon = Instagram;
-    if (type === 'twitter') Icon = Twitter;
-    if (type === 'youtube') Icon = Youtube;
-    if (type === 'tiktok') Icon = Video; // Generic video icon for TikTok as standard lib lacks it
+    // Default fallback
+    let IconComponent = LinkIcon;
+    let iconProps = { size: 20 };
+
+    if (type === 'instagram') {
+      IconComponent = Instagram;
+    } else if (type === 'twitter') {
+      IconComponent = IconBrandX;
+      iconProps = { size: 18 };
+    } else if (type === 'youtube') {
+      IconComponent = Youtube;
+    } else if (type === 'tiktok') {
+      IconComponent = IconBrandTikTok;
+      iconProps = { size: 18 };
+    }
 
     return (
       <a 
         href={url} 
         target="_blank" 
         rel="noopener noreferrer" 
-        className={`group relative p-2 rounded-xl transition-all hover:bg-white hover:shadow-md ${theme.text}`}
+        className={`group relative p-2 rounded-xl transition-all hover:bg-white hover:shadow-md ${theme.text} flex items-center justify-center`}
         title={type}
       >
-        <Icon size={24} strokeWidth={1.5} />
+        <IconComponent {...iconProps} strokeWidth={1.5} />
       </a>
     );
   };
@@ -166,7 +204,6 @@ export default function App() {
               <Star fill="currentColor" size={20} />
               <div className={`absolute -right-3 top-1/2 -translate-y-1/2 w-1 h-8 ${theme.primary} rounded-full`}></div>
             </div>
-
             <div className="flex lg:flex-col gap-4 border-l lg:border-l-0 lg:border-t border-gray-300 pl-4 lg:pl-0 lg:pt-4">
               {data.instagram && <SocialIcon type="instagram" url={data.instagram} />}
               {data.tiktok && <SocialIcon type="tiktok" url={data.tiktok} />}
@@ -204,7 +241,7 @@ export default function App() {
           </div>
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
-
+          
           <div className="absolute top-4 left-4 md:top-auto md:bottom-32 md:left-8 bg-white/90 backdrop-blur-md px-4 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl shadow-lg border border-white/50 max-w-[150px] md:max-w-[200px]">
              <div className="text-[9px] md:text-[10px] uppercase text-gray-500 font-bold tracking-widest mb-0.5">Real Name</div>
              <div className="text-xs md:text-sm font-bold text-gray-800 leading-tight">{data.realName}</div>
@@ -361,19 +398,27 @@ export default function App() {
                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Social Media (Links)</label>
                  <div className="grid grid-cols-1 gap-3">
                     <div className="relative">
-                      <Instagram size={16} className="absolute top-3 left-3 text-gray-400" />
+                      <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                        <Instagram size={16} />
+                      </div>
                       <input name="instagram" value={data.instagram} onChange={handleInputChange} placeholder="Instagram URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
                     </div>
                     <div className="relative">
-                      <Video size={16} className="absolute top-3 left-3 text-gray-400" />
+                      <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                        <IconBrandTikTok size={16} />
+                      </div>
                       <input name="tiktok" value={data.tiktok} onChange={handleInputChange} placeholder="TikTok URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
                     </div>
                     <div className="relative">
-                      <Twitter size={16} className="absolute top-3 left-3 text-gray-400" />
+                      <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                        <IconBrandX size={16} />
+                      </div>
                       <input name="twitter" value={data.twitter} onChange={handleInputChange} placeholder="X / Twitter URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
                     </div>
                     <div className="relative">
-                      <Youtube size={16} className="absolute top-3 left-3 text-gray-400" />
+                       <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                         <Youtube size={16} />
+                       </div>
                       <input name="youtube" value={data.youtube} onChange={handleInputChange} placeholder="YouTube URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
                     </div>
                  </div>
@@ -440,7 +485,6 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-0 md:p-4 overflow-x-hidden">
       
-      {/* Published Header */}
       <div className="w-full md:max-w-2xl bg-gray-800 md:rounded-t-xl p-4 flex flex-col md:flex-row items-center gap-4 border-b border-gray-700 sticky top-0 z-50 md:static">
          <div className="hidden md:flex gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
