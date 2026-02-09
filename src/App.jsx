@@ -388,7 +388,7 @@ export default function App() {
              </div>
           </div>
 
-          <div className="bg-white rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-xl h-fit order-2 max-w-md mx-auto w-full">
+          <div className="bg-white rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-xl h-fit order-2 max-w-6xl mx-auto w-full">
             <div className="flex items-center gap-2 mb-6 border-b pb-4">
               <div className={`p-2 rounded-lg ${theme.soft}`}>
                 <Edit3 size={18} className={theme.text} />
@@ -396,87 +396,93 @@ export default function App() {
               <h2 className="text-lg font-bold text-gray-800">Edit Profile</h2>
             </div>
             
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
               
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Theme Color</label>
-                <div className="flex flex-wrap gap-3">
-                  {Object.keys(THEMES).map(color => (
-                    <button
-                      key={color}
-                      onClick={() => handleThemeChange(color)}
-                      className={`w-10 h-10 rounded-full border-4 transition-all ${
-                        data.themeColor === color ? 'border-gray-800 scale-110 shadow-md' : 'border-transparent'
-                      } ${THEMES[color].primary}`}
-                      aria-label={`Select ${color} theme`}
-                    />
-                  ))}
+              {/* Kolom Kiri */}
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Theme Color</label>
+                  <div className="flex flex-wrap gap-3">
+                    {Object.keys(THEMES).map(color => (
+                      <button
+                        key={color}
+                        onClick={() => handleThemeChange(color)}
+                        className={`w-10 h-10 rounded-full border-4 transition-all ${
+                          data.themeColor === color ? 'border-gray-800 scale-110 shadow-md' : 'border-transparent'
+                        } ${THEMES[color].primary}`}
+                        aria-label={`Select ${color} theme`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Social Media (Links)</label>
+                   <div className="grid grid-cols-1 gap-3">
+                      <div className="relative">
+                        <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                          <Instagram size={16} />
+                        </div>
+                        <input name="instagram" value={data.instagram} onChange={handleInputChange} placeholder="Instagram URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
+                      </div>
+                      <div className="relative">
+                        <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                          <IconBrandTikTok size={16} />
+                        </div>
+                        <input name="tiktok" value={data.tiktok} onChange={handleInputChange} placeholder="TikTok URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
+                      </div>
+                      <div className="relative">
+                        <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                          <IconBrandX size={16} />
+                        </div>
+                        <input name="twitter" value={data.twitter} onChange={handleInputChange} placeholder="X / Twitter URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
+                      </div>
+                      <div className="relative">
+                         <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                           <Youtube size={16} />
+                         </div>
+                        <input name="youtube" value={data.youtube} onChange={handleInputChange} placeholder="YouTube URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
+                      </div>
+                   </div>
+                </div>
+
+                <div className="space-y-4">
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Images (URL)</label>
+                   <input name="heroImage" value={data.heroImage} onChange={handleInputChange} placeholder="Main Photo URL" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                   <input name="secondaryImage" value={data.secondaryImage} onChange={handleInputChange} placeholder="Secondary Photo URL" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
                 </div>
               </div>
 
-              <div className="space-y-4">
-                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Social Media (Links)</label>
-                 <div className="grid grid-cols-1 gap-3">
-                    <div className="relative">
-                      <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
-                        <Instagram size={16} />
-                      </div>
-                      <input name="instagram" value={data.instagram} onChange={handleInputChange} placeholder="Instagram URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
-                    </div>
-                    <div className="relative">
-                      <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
-                        <IconBrandTikTok size={16} />
-                      </div>
-                      <input name="tiktok" value={data.tiktok} onChange={handleInputChange} placeholder="TikTok URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
-                    </div>
-                    <div className="relative">
-                      <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
-                        <IconBrandX size={16} />
-                      </div>
-                      <input name="twitter" value={data.twitter} onChange={handleInputChange} placeholder="X / Twitter URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
-                    </div>
-                    <div className="relative">
-                       <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
-                         <Youtube size={16} />
-                       </div>
-                      <input name="youtube" value={data.youtube} onChange={handleInputChange} placeholder="YouTube URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
-                    </div>
-                 </div>
-              </div>
+              {/* Kolom Kanan */}
+              <div className="space-y-6">
+                <div className="space-y-4">
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Identity</label>
+                   <div className="grid grid-cols-2 gap-4">
+                      <input name="username" value={data.username} onChange={handleInputChange} placeholder="Username" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                      <input name="role" value={data.role} onChange={handleInputChange} placeholder="Role" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                   </div>
+                   <input name="realName" value={data.realName} onChange={handleInputChange} placeholder="Full Real Name" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                </div>
 
-              <div className="space-y-4 pt-4 border-t">
-                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Identity</label>
-                 <div className="grid grid-cols-2 gap-4">
-                    <input name="username" value={data.username} onChange={handleInputChange} placeholder="Username" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
-                    <input name="role" value={data.role} onChange={handleInputChange} placeholder="Role" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
-                 </div>
-                 <input name="realName" value={data.realName} onChange={handleInputChange} placeholder="Full Real Name" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
-              </div>
+                <div className="space-y-4">
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Details</label>
+                   <input name="hometown" value={data.hometown} onChange={handleInputChange} placeholder="Hometown" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                   <input name="tags" value={data.tags} onChange={handleInputChange} placeholder="Tags (comma separated)" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                   
+                   <input 
+                      name="yearsActiveStart" 
+                      value={data.yearsActiveStart} 
+                      onChange={handleInputChange} 
+                      placeholder="Active Since (Year)" 
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" 
+                   />
 
-              <div className="space-y-4">
-                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Details</label>
-                 <input name="hometown" value={data.hometown} onChange={handleInputChange} placeholder="Hometown" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
-                 <input name="tags" value={data.tags} onChange={handleInputChange} placeholder="Tags (comma separated)" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
-                 
-                 <input 
-                    name="yearsActiveStart" 
-                    value={data.yearsActiveStart} 
-                    onChange={handleInputChange} 
-                    placeholder="Active Since (Year)" 
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" 
-                 />
-
-                 <div className="grid grid-cols-3 gap-2">
-                    <input name="birthdayDay" value={data.birthdayDay} onChange={handleInputChange} placeholder="DD" className="bg-gray-50 border rounded-xl px-3 py-2 text-sm text-center"/>
-                    <input name="birthdayMonth" value={data.birthdayMonth} onChange={handleInputChange} placeholder="Month" className="bg-gray-50 border rounded-xl px-3 py-2 text-sm text-center"/>
-                    <input name="birthdayYear" value={data.birthdayYear} onChange={handleInputChange} placeholder="YYYY" className="bg-gray-50 border rounded-xl px-3 py-2 text-sm text-center"/>
-                 </div>
-              </div>
-
-              <div className="space-y-4">
-                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Images (URL)</label>
-                 <input name="heroImage" value={data.heroImage} onChange={handleInputChange} placeholder="Main Photo URL" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
-                 <input name="secondaryImage" value={data.secondaryImage} onChange={handleInputChange} placeholder="Secondary Photo URL" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                   <div className="grid grid-cols-3 gap-2">
+                      <input name="birthdayDay" value={data.birthdayDay} onChange={handleInputChange} placeholder="DD" className="bg-gray-50 border rounded-xl px-3 py-2 text-sm text-center"/>
+                      <input name="birthdayMonth" value={data.birthdayMonth} onChange={handleInputChange} placeholder="Month" className="bg-gray-50 border rounded-xl px-3 py-2 text-sm text-center"/>
+                      <input name="birthdayYear" value={data.birthdayYear} onChange={handleInputChange} placeholder="YYYY" className="bg-gray-50 border rounded-xl px-3 py-2 text-sm text-center"/>
+                   </div>
+                </div>
               </div>
 
             </div>
