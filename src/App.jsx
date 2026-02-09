@@ -47,7 +47,7 @@ const INITIAL_DATA = {
   yearsActiveStart: '2026',
   heroImage: 'https://i.pinimg.com/736x/65/e7/aa/65e7aac180c9321c90d2f3434e1f1f69.jpg',
   secondaryImage: 'https://i.pinimg.com/736x/b3/53/e0/b353e01568cd45a320acb490c90748f4.jpg',
-  themeColor: 'pink',
+  themeColor: 'red',
   // Social Media Links (Empty by default)
   instagram: 'https://instagram.com',
   tiktok: 'https://tiktok.com',
@@ -372,9 +372,23 @@ export default function App() {
           </div>
         </header>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[400px_1fr] gap-8 pb-10">
+        <div className="max-w-7xl mx-auto flex flex-col gap-8 pb-10">
           
-          <div className="bg-white rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-xl h-fit order-2 xl:order-1">
+          <div className="order-1">
+             <div className="space-y-4">
+               <div className="flex items-center justify-between px-2">
+                 <span className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                   <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div> Live Preview
+                 </span>
+                 <span className="text-xs text-gray-400 hidden md:inline">Scale window to test responsiveness</span>
+               </div>
+               <div className="transform transition-all duration-500">
+                 <BioCard />
+               </div>
+             </div>
+          </div>
+
+          <div className="bg-white rounded-[24px] md:rounded-3xl p-5 md:p-6 shadow-xl h-fit order-2 max-w-md mx-auto w-full">
             <div className="flex items-center gap-2 mb-6 border-b pb-4">
               <div className={`p-2 rounded-lg ${theme.soft}`}>
                 <Edit3 size={18} className={theme.text} />
@@ -466,20 +480,6 @@ export default function App() {
               </div>
 
             </div>
-          </div>
-
-          <div className="order-1 xl:order-2">
-             <div className="sticky top-8 space-y-4">
-               <div className="flex items-center justify-between px-2">
-                 <span className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div> Live Preview
-                 </span>
-                 <span className="text-xs text-gray-400 hidden md:inline">Scale window to test responsiveness</span>
-               </div>
-               <div className="transform transition-all duration-500">
-                 <BioCard />
-               </div>
-             </div>
           </div>
 
         </div>
