@@ -36,19 +36,18 @@ const IconBrandTikTok = ({ size = 20, className }) => (
 
 // --- Default Data ---
 const INITIAL_DATA = {
-  username: 'jazzlyn',
-  realName: 'Jazzlyn Agatha Trisha',
-  role: 'Singer',
-  tags: 'Idol, J-Pop',
-  hometown: 'Jakarta, Indonesia',
-  birthdayDay: '16',
-  birthdayMonth: 'February',
-  birthdayYear: '2011',
-  yearsActiveStart: '2023',
-  heroImage: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1000&auto=format&fit=crop',
-  secondaryImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=500&auto=format&fit=crop',
+  username: 'kaishiscd',
+  realName: 'Kai Shi',
+  role: 'Coder',
+  tags: 'Creator, Developer',
+  hometown: 'Jawa Barat, Indonesia',
+  birthdayDay: '13',
+  birthdayMonth: 'April',
+  birthdayYear: '2006',
+  yearsActiveStart: '2026',
+  heroImage: 'https://i.pinimg.com/736x/65/e7/aa/65e7aac180c9321c90d2f3434e1f1f69.jpg',
+  secondaryImage: 'https://i.pinimg.com/736x/b3/53/e0/b353e01568cd45a320acb490c90748f4.jpg',
   themeColor: 'pink',
-  likes: 9977,
   // Social Media Links (Empty by default)
   instagram: 'https://instagram.com',
   tiktok: 'https://tiktok.com',
@@ -97,6 +96,14 @@ const THEMES = {
     border: 'border-orange-200',
     hover: 'hover:text-orange-600',
     ring: 'focus:ring-orange-500'
+  },
+  red: {
+    primary: 'bg-red-500',
+    text: 'text-red-500',
+    soft: 'bg-red-100',
+    border: 'border-red-200',
+    hover: 'hover:text-red-600',
+    ring: 'focus:ring-red-500'
   }
 };
 
