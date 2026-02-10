@@ -240,7 +240,7 @@ export default function App() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent lg:hidden"></div>
           
-          <div className="absolute top-6 left-6 lg:top-auto lg:bottom-40 lg:left-10 bg-white/95 backdrop-blur-md px-5 py-3 rounded-2xl shadow-xl border border-white/60 max-w-[180px] lg:max-w-[220px]">
+          <div className="absolute top-8 left-6 lg:top-auto lg:bottom-40 lg:left-10 bg-white/95 backdrop-blur-md px-5 py-3 rounded-2xl shadow-xl border border-white/60 max-w-[180px] lg:max-w-[220px]">
              <div className="text-[10px] uppercase text-gray-500 font-bold tracking-widest mb-1">Real Name</div>
              <div className="text-sm lg:text-base font-bold text-gray-900 leading-tight">{data.realName}</div>
           </div>
