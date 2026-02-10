@@ -260,13 +260,17 @@ export default function App() {
              <Heart fill="currentColor" size={24} className="lg:w-8 lg:h-8" />
           </div>
 
-          <div className="absolute bottom-6 right-6 lg:bottom-10 lg:right-10 w-auto max-w-[240px] text-right lg:text-right">
-             <div className="bg-black/30 backdrop-blur-md p-4 rounded-3xl border border-white/10 shadow-2xl inline-block">
-                <h1 className="text-3xl lg:text-4xl font-black italic leading-none text-white uppercase tracking-tight mb-3 drop-shadow-md">
+          <div className="absolute bottom-6 right-6 lg:bottom-10 lg:right-10 max-w-[200px] lg:max-w-[240px] text-right">
+             <div className="bg-black/30 backdrop-blur-md p-4 rounded-3xl border border-white/10 shadow-2xl">
+                <h1 className={`font-black italic leading-none text-white uppercase tracking-tight mb-3 drop-shadow-md break-words ${
+                  data.username.length > 12 ? 'text-xl lg:text-2xl' : 
+                  data.username.length > 8 ? 'text-2xl lg:text-3xl' : 
+                  'text-3xl lg:text-4xl'
+                }`}>
                   {data.username}
                 </h1>
                 
-                <div className="flex gap-2 justify-end">
+                <div className="flex gap-2 justify-between max-w-full">
                     <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-white text-gray-800 shadow-sm`}>
                       <Sparkles size={14} className={theme.text} fill="currentColor" />
                     </div>
