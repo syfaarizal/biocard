@@ -193,8 +193,8 @@ export default function App() {
 
       <div className="flex flex-col lg:grid lg:grid-cols-[100px_1fr_350px] gap-4 md:gap-6 lg:gap-8 min-h-[600px]">
         
-        <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-3 px-4 lg:py-8 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-[32px] overflow-x-auto lg:overflow-hidden h-full">
-          <div className="flex lg:flex-col gap-6 md:gap-10 text-gray-400 mr-8 lg:mr-0 lg:mt-16">
+        <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-3 px-2 lg:py-8 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-[32px] overflow-x-auto lg:overflow-hidden h-full">
+          <div className="flex lg:flex-col gap-6 md:gap-10 text-gray-400 ml-2 mr-2 lg:mr-0 lg:mt-16">
             <Home className="hover:text-gray-800 cursor-pointer transition-colors mt-2" size={24} />
             <div className={`hidden lg:block relative ${theme.text}`}>
               <Star fill="currentColor" size={24} />
