@@ -125,6 +125,17 @@ export default function App() {
     setData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleImageUpload = (e, fieldName) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setData(prev => ({ ...prev, [fieldName]: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleThemeChange = (color) => {
     setData(prev => ({ ...prev, themeColor: color }));
   };
@@ -193,8 +204,8 @@ export default function App() {
 
       <div className="flex flex-col lg:grid lg:grid-cols-[100px_1fr_350px] gap-4 md:gap-6 lg:gap-8 min-h-[600px]">
         
-        <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-3 px-2 lg:py-8 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-[32px] overflow-x-auto lg:overflow-hidden h-full">
-          <div className="flex lg:flex-col gap-6 md:gap-10 text-gray-400 ml-2 mr-2 lg:mr-0 lg:mt-16">
+        <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-3 px-4 lg:py-8 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-[32px] overflow-x-auto lg:overflow-hidden h-full">
+          <div className="flex lg:flex-col gap-6 md:gap-10 text-gray-400 mr-8 lg:mr-0 lg:mt-16">
             <Home className="hover:text-gray-800 cursor-pointer transition-colors mt-2" size={24} />
             <div className={`hidden lg:block relative ${theme.text}`}>
               <Star fill="currentColor" size={24} />
@@ -451,9 +462,43 @@ export default function App() {
                 </div>
 
                 <div className="space-y-4">
-                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Images (URL)</label>
-                   <input name="heroImage" value={data.heroImage} onChange={handleInputChange} placeholder="Main Photo URL" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
-                   <input name="secondaryImage" value={data.secondaryImage} onChange={handleInputChange} placeholder="Secondary Photo URL" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" />
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Images (Upload)</label>
+                   
+                   {/* Main Photo Upload */}
+                   <div className="space-y-2">
+                     <label className="text-xs text-gray-500 font-medium">Main Photo</label>
+                     <div className="relative">
+                       <input 
+                         type="file" 
+                         accept="image/*" 
+                         onChange={(e) => handleImageUpload(e, 'heroImage')}
+                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gray-900 file:text-white hover:file:bg-gray-700 cursor-pointer"
+                       />
+                       {data.heroImage && (
+                         <div className="mt-2 relative w-full h-32 rounded-xl overflow-hidden border-2 border-gray-200">
+                           <img src={data.heroImage} alt="Main preview" className="w-full h-full object-cover" />
+                         </div>
+                       )}
+                     </div>
+                   </div>
+
+                   {/* Secondary Photo Upload */}
+                   <div className="space-y-2">
+                     <label className="text-xs text-gray-500 font-medium">Secondary Photo</label>
+                     <div className="relative">
+                       <input 
+                         type="file" 
+                         accept="image/*" 
+                         onChange={(e) => handleImageUpload(e, 'secondaryImage')}
+                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gray-900 file:text-white hover:file:bg-gray-700 cursor-pointer"
+                       />
+                       {data.secondaryImage && (
+                         <div className="mt-2 relative w-full h-32 rounded-xl overflow-hidden border-2 border-gray-200">
+                           <img src={data.secondaryImage} alt="Secondary preview" className="w-full h-full object-cover" />
+                         </div>
+                       )}
+                     </div>
+                   </div>
                 </div>
               </div>
 
