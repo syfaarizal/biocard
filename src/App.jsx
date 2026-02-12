@@ -54,10 +54,10 @@ const INITIAL_DATA = {
   twitter: 'https://twitter.com',
   youtube: 'https://youtube.com',
   // Spotify Track
-  spotifyLink: '',
-  songTitle: 'Favorite Track',
-  songArtist: '',
-  songThumbnail: ''
+  spotifyLink: 'https://open.spotify.com/intl-id/track/4KKVuHMZLBUltt0VxLc23N?si=dc2168d2114a4f63',
+  songTitle: 'GUARDED',
+  songArtist: 'Chris Grey',
+  songThumbnail: 'https://i.pinimg.com/1200x/6a/81/e0/6a81e082aefd34078fbbd05c46aca6c3.jpg'
 };
 
 // --- Theme Configurations ---
@@ -117,6 +117,7 @@ export default function App() {
   const [data, setData] = useState(INITIAL_DATA);
   const [viewMode, setViewMode] = useState('edit'); // 'edit' or 'published'
   const [isCopied, setIsCopied] = useState(false);
+  const [isLoadingSpotify, setIsLoadingSpotify] = useState(false);
 
   useEffect(() => {
     const savedData = localStorage.getItem('biocard_data');
@@ -171,17 +172,20 @@ export default function App() {
 
     // Check if it's a valid Spotify track link
     if (link.includes('open.spotify.com/track/')) {
+      setIsLoadingSpotify(true);
       try {
+        console.log('Fetching Spotify data for:', link);
         const response = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(link)}`);
         if (!response.ok) throw new Error('Failed to fetch Spotify data');
         
         const spotifyData = await response.json();
+        console.log('Spotify data received:', spotifyData);
         
         // Extract title and artist from the title string (format: "Song Title by Artist Name")
         const fullTitle = spotifyData.title || '';
         const splitIndex = fullTitle.lastIndexOf(' by ');
         
-        let songTitle = 'Favorite Track';
+        let songTitle = '';
         let songArtist = '';
         
         if (splitIndex > -1) {
@@ -191,23 +195,28 @@ export default function App() {
           songTitle = fullTitle.trim();
         }
         
+        console.log('Parsed - Title:', songTitle, 'Artist:', songArtist);
+        
         setData(prev => ({ 
           ...prev,
           spotifyLink: link,
-          songTitle: songTitle || 'Favorite Track',
+          songTitle: songTitle || '',
           songArtist: songArtist || prev.realName,
           songThumbnail: spotifyData.thumbnail_url || ''
         }));
+        
+        setIsLoadingSpotify(false);
       } catch (error) {
         console.error('Failed to fetch Spotify data:', error);
         alert('Failed to load Spotify track. Please check the link and try again.');
+        setIsLoadingSpotify(false);
       }
     } else if (link === '') {
       // Reset to default if link is cleared
       setData(prev => ({ 
         ...prev,
         spotifyLink: '',
-        songTitle: 'Favorite Track',
+        songTitle: '',
         songArtist: '',
         songThumbnail: ''
       }));
@@ -411,14 +420,11 @@ export default function App() {
                 )}
                 <div className="flex-1 overflow-hidden">
                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
-                     {data.songTitle && data.songTitle !== 'Favorite Track' ? 'My Track' : 'Music'}
+                     {data.songTitle || 'Music'}
                    </div>
                    <div className="text-base font-bold text-gray-800 truncate">
-                     {data.songTitle || 'Add your favorite song'}
+                     {data.songArtist || 'Add your favorite song'}
                    </div>
-                   {data.songArtist && (
-                     <div className="text-xs text-gray-500 truncate mt-0.5">by {data.songArtist}</div>
-                   )}
                    <div className="flex items-end gap-0.5 h-4 mt-2 opacity-60">
                      {[...Array(16)].map((_, i) => (
                        <div key={i} className={`w-1 rounded-full ${theme.primary} transition-all duration-300`} style={{height: `${Math.max(20, Math.random() * 100)}%`}}></div>
@@ -579,10 +585,19 @@ export default function App() {
                        value={data.spotifyLink} 
                        onChange={handleSpotifyLink} 
                        placeholder="Paste Spotify track URL (e.g. https://open.spotify.com/track/...)" 
-                       className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} 
+                       className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`}
+                       disabled={isLoadingSpotify}
                      />
+                     {isLoadingSpotify && (
+                       <div className="absolute top-3 right-3">
+                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
+                       </div>
+                     )}
                    </div>
-                   {data.songTitle && data.songTitle !== 'Favorite Track' && (
+                   {isLoadingSpotify && (
+                     <div className="text-xs text-gray-500 italic">Loading track info...</div>
+                   )}
+                   {!isLoadingSpotify && data.songTitle && (
                      <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-xl">
                        {data.songThumbnail && (
                          <img src={data.songThumbnail} alt="Album" className="w-12 h-12 rounded-lg object-cover" />
