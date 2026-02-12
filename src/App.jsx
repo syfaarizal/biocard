@@ -135,7 +135,31 @@ export default function App() {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setData(prev => ({ ...prev, [fieldName]: reader.result }));
+        const img = new Image();
+        img.onload = () => {
+          // Create canvas to compress image
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Resize if too large (max 800px width)
+          const maxWidth = 800;
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Compress to 0.7 quality
+          const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
+          setData(prev => ({ ...prev, [fieldName]: compressedImage }));
+        };
+        img.src = reader.result;
       };
       reader.readAsDataURL(file);
     }
@@ -149,21 +173,44 @@ export default function App() {
     if (link.includes('open.spotify.com/track/')) {
       try {
         const response = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(link)}`);
+        if (!response.ok) throw new Error('Failed to fetch Spotify data');
+        
         const spotifyData = await response.json();
         
         // Extract title and artist from the title string (format: "Song Title by Artist Name")
         const fullTitle = spotifyData.title || '';
-        const [songTitle, songArtist] = fullTitle.split(' by ');
+        const splitIndex = fullTitle.lastIndexOf(' by ');
+        
+        let songTitle = 'Favorite Track';
+        let songArtist = '';
+        
+        if (splitIndex > -1) {
+          songTitle = fullTitle.substring(0, splitIndex).trim();
+          songArtist = fullTitle.substring(splitIndex + 4).trim();
+        } else {
+          songTitle = fullTitle.trim();
+        }
         
         setData(prev => ({ 
-          ...prev, 
+          ...prev,
+          spotifyLink: link,
           songTitle: songTitle || 'Favorite Track',
-          songArtist: songArtist || data.realName,
+          songArtist: songArtist || prev.realName,
           songThumbnail: spotifyData.thumbnail_url || ''
         }));
       } catch (error) {
         console.error('Failed to fetch Spotify data:', error);
+        alert('Failed to load Spotify track. Please check the link and try again.');
       }
+    } else if (link === '') {
+      // Reset to default if link is cleared
+      setData(prev => ({ 
+        ...prev,
+        spotifyLink: '',
+        songTitle: 'Favorite Track',
+        songArtist: '',
+        songThumbnail: ''
+      }));
     }
   };
 
@@ -172,9 +219,14 @@ export default function App() {
   };
 
   const saveAndPublish = () => {
-    localStorage.setItem('biocard_data', JSON.stringify(data));
-    setViewMode('published');
-    window.scrollTo(0, 0);
+    try {
+      localStorage.setItem('biocard_data', JSON.stringify(data));
+      setViewMode('published');
+      window.scrollTo(0, 0);
+    } catch (error) {
+      console.error('Failed to save data:', error);
+      alert('Failed to save data. Images might be too large. Please try with smaller images.');
+    }
   };
 
   const handleEditClick = () => {
@@ -358,8 +410,12 @@ export default function App() {
                   </div>
                 )}
                 <div className="flex-1 overflow-hidden">
-                   <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Now Playing</div>
-                   <div className="text-base font-bold text-gray-800 truncate">{data.songTitle || 'Select a song'}</div>
+                   <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                     {data.songTitle && data.songTitle !== 'Favorite Track' ? 'My Track' : 'Music'}
+                   </div>
+                   <div className="text-base font-bold text-gray-800 truncate">
+                     {data.songTitle || 'Add your favorite song'}
+                   </div>
                    {data.songArtist && (
                      <div className="text-xs text-gray-500 truncate mt-0.5">by {data.songArtist}</div>
                    )}
@@ -369,9 +425,20 @@ export default function App() {
                      ))}
                    </div>
                 </div>
-                <div className={`w-12 h-12 rounded-full ${theme.soft} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-sm`}>
-                   <Play size={18} className={`ml-1 ${theme.text}`} fill="currentColor" />
-                </div>
+                {data.spotifyLink ? (
+                  <a 
+                    href={data.spotifyLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={`w-12 h-12 rounded-full ${theme.soft} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-sm`}
+                  >
+                    <Play size={18} className={`ml-1 ${theme.text}`} fill="currentColor" />
+                  </a>
+                ) : (
+                  <div className={`w-12 h-12 rounded-full ${theme.soft} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-sm opacity-50`}>
+                    <Play size={18} className={`ml-1 ${theme.text}`} fill="currentColor" />
+                  </div>
+                )}
              </div>
           </div>
 
