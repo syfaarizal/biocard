@@ -52,7 +52,12 @@ const INITIAL_DATA = {
   instagram: 'https://instagram.com',
   tiktok: 'https://tiktok.com',
   twitter: 'https://twitter.com',
-  youtube: 'https://youtube.com'
+  youtube: 'https://youtube.com',
+  // Spotify Track
+  spotifyLink: '',
+  songTitle: 'Favorite Track',
+  songArtist: '',
+  songThumbnail: ''
 };
 
 // --- Theme Configurations ---
@@ -133,6 +138,32 @@ export default function App() {
         setData(prev => ({ ...prev, [fieldName]: reader.result }));
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSpotifyLink = async (e) => {
+    const link = e.target.value;
+    setData(prev => ({ ...prev, spotifyLink: link }));
+
+    // Check if it's a valid Spotify track link
+    if (link.includes('open.spotify.com/track/')) {
+      try {
+        const response = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(link)}`);
+        const spotifyData = await response.json();
+        
+        // Extract title and artist from the title string (format: "Song Title by Artist Name")
+        const fullTitle = spotifyData.title || '';
+        const [songTitle, songArtist] = fullTitle.split(' by ');
+        
+        setData(prev => ({ 
+          ...prev, 
+          songTitle: songTitle || 'Favorite Track',
+          songArtist: songArtist || data.realName,
+          songThumbnail: spotifyData.thumbnail_url || ''
+        }));
+      } catch (error) {
+        console.error('Failed to fetch Spotify data:', error);
+      }
     }
   };
 
@@ -317,12 +348,21 @@ export default function App() {
              <div className={`absolute -right-10 -top-10 w-40 h-40 ${theme.soft} rounded-full opacity-50`}></div>
              
              <div className="flex items-center gap-5 relative z-10">
-                <div className={`w-16 h-16 flex-shrink-0 ${theme.soft} rounded-2xl flex items-center justify-center`}>
-                   <Music className={theme.text} size={32} />
-                </div>
+                {data.songThumbnail ? (
+                  <div className="w-16 h-16 flex-shrink-0 rounded-2xl overflow-hidden shadow-md">
+                    <img src={data.songThumbnail} alt="Album art" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className={`w-16 h-16 flex-shrink-0 ${theme.soft} rounded-2xl flex items-center justify-center`}>
+                    <Music className={theme.text} size={32} />
+                  </div>
+                )}
                 <div className="flex-1 overflow-hidden">
                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Now Playing</div>
                    <div className="text-base font-bold text-gray-800 truncate">{data.songTitle || 'Select a song'}</div>
+                   {data.songArtist && (
+                     <div className="text-xs text-gray-500 truncate mt-0.5">by {data.songArtist}</div>
+                   )}
                    <div className="flex items-end gap-0.5 h-4 mt-2 opacity-60">
                      {[...Array(16)].map((_, i) => (
                        <div key={i} className={`w-1 rounded-full ${theme.primary} transition-all duration-300`} style={{height: `${Math.max(20, Math.random() * 100)}%`}}></div>
@@ -459,6 +499,35 @@ export default function App() {
                         <input name="youtube" value={data.youtube} onChange={handleInputChange} placeholder="YouTube URL" className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} />
                       </div>
                    </div>
+                </div>
+
+                <div className="space-y-4">
+                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Spotify Track</label>
+                   <div className="relative">
+                     <div className="absolute top-3 left-3 text-gray-400 pointer-events-none">
+                       <Music size={16} />
+                     </div>
+                     <input 
+                       name="spotifyLink" 
+                       value={data.spotifyLink} 
+                       onChange={handleSpotifyLink} 
+                       placeholder="Paste Spotify track URL (e.g. https://open.spotify.com/track/...)" 
+                       className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`} 
+                     />
+                   </div>
+                   {data.songTitle && data.songTitle !== 'Favorite Track' && (
+                     <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-xl">
+                       {data.songThumbnail && (
+                         <img src={data.songThumbnail} alt="Album" className="w-12 h-12 rounded-lg object-cover" />
+                       )}
+                       <div className="flex-1 min-w-0">
+                         <div className="text-sm font-bold text-gray-800 truncate">{data.songTitle}</div>
+                         {data.songArtist && (
+                           <div className="text-xs text-gray-500 truncate">by {data.songArtist}</div>
+                         )}
+                       </div>
+                     </div>
+                   )}
                 </div>
 
                 <div className="space-y-4">
