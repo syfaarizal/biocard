@@ -54,10 +54,10 @@ const INITIAL_DATA = {
   twitter: 'https://twitter.com',
   youtube: 'https://youtube.com',
   // Spotify Track
-  spotifyLink: 'https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b',
-  songTitle: 'GUARDED',
-  songArtist: 'Chris Grey',
-  songThumbnail: 'https://i.pinimg.com/1200x/6a/81/e0/6a81e082aefd34078fbbd05c46aca6c3.jpg'
+  spotifyLink: 'https://open.spotify.com/intl-id/track/33SawFo7Ld2TcTlRi6gmRu?si=33e50dc8e25f463f',
+  songTitle: 'Coffee & Jazz',
+  songArtist: 'Cafe Music BGM channel',
+  songThumbnail: ''
 };
 
 // --- Theme Configurations ---
@@ -170,14 +170,25 @@ export default function App() {
   };
 
   const handleSpotifyLink = async (e) => {
+    console.log('⚡ handleSpotifyLink CALLED! Event:', e.target.value);
+    
     const link = e.target.value;
     
     // First, update the link immediately
     setData(prev => ({ ...prev, spotifyLink: link }));
     setIsSaved(false);
 
-    // Check if it's a valid Spotify track link
-    if (link.includes('open.spotify.com/track/')) {
+    console.log('📝 Link updated to:', link);
+
+    // Check if it's a valid Spotify track link (support all formats including regional)
+    // Formats supported:
+    // - https://open.spotify.com/track/xxxxx
+    // - https://open.spotify.com/intl-id/track/xxxxx
+    // - https://open.spotify.com/intl-fr/track/xxxxx
+    const isSpotifyTrack = link.includes('open.spotify.com') && link.includes('/track/');
+    
+    if (isSpotifyTrack) {
+      console.log('✅ Valid Spotify link detected!');
       setIsLoadingSpotify(true);
       try {
         console.log('🎵 Fetching Spotify data for:', link);
@@ -233,6 +244,9 @@ export default function App() {
         songArtist: '',
         songThumbnail: ''
       }));
+    } else {
+      console.log('⚠️ Not a valid Spotify track link:', link);
+      console.log('💡 Link should contain "open.spotify.com" and "/track/"');
     }
   };
 
@@ -612,9 +626,27 @@ export default function App() {
                        value={data.spotifyLink} 
                        onChange={handleSpotifyLink} 
                        placeholder="Paste Spotify track URL (e.g. https://open.spotify.com/track/...)" 
-                       className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`}
+                       className={`w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-20 py-2.5 text-sm outline-none transition-all ${theme.ring} focus:border-transparent`}
                        disabled={isLoadingSpotify}
                      />
+                     {data.spotifyLink && !isLoadingSpotify && (
+                       <button
+                         onClick={() => {
+                           console.log('🧹 Clearing Spotify link');
+                           setData(prev => ({ 
+                             ...prev,
+                             spotifyLink: '',
+                             songTitle: '',
+                             songArtist: '',
+                             songThumbnail: ''
+                           }));
+                           setIsSaved(false);
+                         }}
+                         className="absolute top-2.5 right-2 px-2 py-1 text-xs bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors font-medium"
+                       >
+                         Clear
+                       </button>
+                     )}
                      {isLoadingSpotify && (
                        <div className="absolute top-3 right-3">
                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
