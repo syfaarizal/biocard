@@ -54,7 +54,7 @@ const INITIAL_DATA = {
   twitter: 'https://twitter.com',
   youtube: 'https://youtube.com',
   // Spotify Track
-  spotifyLink: 'https://open.spotify.com/intl-id/track/4KKVuHMZLBUltt0VxLc23N?si=dc2168d2114a4f63',
+  spotifyLink: 'https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b',
   songTitle: 'GUARDED',
   songArtist: 'Chris Grey',
   songThumbnail: 'https://i.pinimg.com/1200x/6a/81/e0/6a81e082aefd34078fbbd05c46aca6c3.jpg'
@@ -118,6 +118,7 @@ export default function App() {
   const [viewMode, setViewMode] = useState('edit'); // 'edit' or 'published'
   const [isCopied, setIsCopied] = useState(false);
   const [isLoadingSpotify, setIsLoadingSpotify] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     const savedData = localStorage.getItem('biocard_data');
@@ -129,6 +130,7 @@ export default function App() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
+    setIsSaved(false); // Mark as unsaved when any change is made
   };
 
   const handleImageUpload = (e, fieldName) => {
@@ -159,6 +161,7 @@ export default function App() {
           // Compress to 0.7 quality
           const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
           setData(prev => ({ ...prev, [fieldName]: compressedImage }));
+          setIsSaved(false); // Mark as unsaved
         };
         img.src = reader.result;
       };
@@ -168,18 +171,21 @@ export default function App() {
 
   const handleSpotifyLink = async (e) => {
     const link = e.target.value;
+    
+    // First, update the link immediately
     setData(prev => ({ ...prev, spotifyLink: link }));
+    setIsSaved(false);
 
     // Check if it's a valid Spotify track link
     if (link.includes('open.spotify.com/track/')) {
       setIsLoadingSpotify(true);
       try {
-        console.log('Fetching Spotify data for:', link);
+        console.log('🎵 Fetching Spotify data for:', link);
         const response = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(link)}`);
         if (!response.ok) throw new Error('Failed to fetch Spotify data');
         
         const spotifyData = await response.json();
-        console.log('Spotify data received:', spotifyData);
+        console.log('✅ Spotify data received:', spotifyData);
         
         // Extract title and artist from the title string (format: "Song Title by Artist Name")
         const fullTitle = spotifyData.title || '';
@@ -195,24 +201,31 @@ export default function App() {
           songTitle = fullTitle.trim();
         }
         
-        console.log('Parsed - Title:', songTitle, 'Artist:', songArtist);
+        console.log('🎵 Parsed - Title:', songTitle, '| Artist:', songArtist);
         
-        setData(prev => ({ 
-          ...prev,
-          spotifyLink: link,
-          songTitle: songTitle || '',
-          songArtist: songArtist || prev.realName,
-          songThumbnail: spotifyData.thumbnail_url || ''
-        }));
+        // Force update with new data
+        setData(prev => {
+          const newData = {
+            ...prev,
+            spotifyLink: link,
+            songTitle: songTitle || 'Unknown Track',
+            songArtist: songArtist || 'Unknown Artist',
+            songThumbnail: spotifyData.thumbnail_url || ''
+          };
+          console.log('🔄 State updated with:', newData);
+          return newData;
+        });
         
         setIsLoadingSpotify(false);
+        console.log('✅ Spotify update complete!');
       } catch (error) {
-        console.error('Failed to fetch Spotify data:', error);
+        console.error('❌ Failed to fetch Spotify data:', error);
         alert('Failed to load Spotify track. Please check the link and try again.');
         setIsLoadingSpotify(false);
       }
     } else if (link === '') {
       // Reset to default if link is cleared
+      console.log('🔄 Clearing Spotify data');
       setData(prev => ({ 
         ...prev,
         spotifyLink: '',
@@ -225,6 +238,20 @@ export default function App() {
 
   const handleThemeChange = (color) => {
     setData(prev => ({ ...prev, themeColor: color }));
+    setIsSaved(false);
+  };
+
+  const handleSaveChanges = () => {
+    try {
+      console.log('💾 Saving data:', data);
+      localStorage.setItem('biocard_data', JSON.stringify(data));
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 3000); // Hide after 3 seconds
+      console.log('✅ Data saved successfully!');
+    } catch (error) {
+      console.error('❌ Failed to save data:', error);
+      alert('Failed to save changes. Images might be too large.');
+    }
   };
 
   const saveAndPublish = () => {
@@ -685,6 +712,31 @@ export default function App() {
                 </div>
               </div>
 
+            </div>
+
+            {/* Save Changes Button */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <button
+                onClick={handleSaveChanges}
+                className={`w-full py-3 rounded-xl font-bold text-white shadow-lg transition-all ${
+                  isSaved 
+                    ? 'bg-green-500 hover:bg-green-600' 
+                    : 'bg-gray-900 hover:bg-gray-800 hover:shadow-xl'
+                }`}
+              >
+                {isSaved ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Check size={18} /> Changes Saved!
+                  </span>
+                ) : (
+                  'Save Changes'
+                )}
+              </button>
+              {!isSaved && (
+                <p className="text-xs text-gray-400 text-center mt-2">
+                  Don't forget to save your changes!
+                </p>
+              )}
             </div>
           </div>
 
