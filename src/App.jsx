@@ -54,10 +54,10 @@ const INITIAL_DATA = {
   twitter: 'https://twitter.com',
   youtube: 'https://youtube.com',
   // Spotify Track
-  spotifyLink: 'https://open.spotify.com/intl-id/track/33SawFo7Ld2TcTlRi6gmRu?si=33e50dc8e25f463f',
-  songTitle: 'Coffee & Jazz',
-  songArtist: 'Cafe Music BGM channel',
-  songThumbnail: ''
+  spotifyLink: 'https://open.spotify.com/intl-id/track/4KKVuHMZLBUltt0VxLc23N?si=dc2168d2114a4f63',
+  songTitle: 'GUARDED',
+  songArtist: 'Chris Grey',
+  songThumbnail: 'https://i.pinimg.com/1200x/6a/81/e0/6a81e082aefd34078fbbd05c46aca6c3.jpg'
 };
 
 // --- Theme Configurations ---
@@ -181,10 +181,6 @@ export default function App() {
     console.log('📝 Link updated to:', link);
 
     // Check if it's a valid Spotify track link (support all formats including regional)
-    // Formats supported:
-    // - https://open.spotify.com/track/xxxxx
-    // - https://open.spotify.com/intl-id/track/xxxxx
-    // - https://open.spotify.com/intl-fr/track/xxxxx
     const isSpotifyTrack = link.includes('open.spotify.com') && link.includes('/track/');
     
     if (isSpotifyTrack) {
@@ -197,22 +193,39 @@ export default function App() {
         
         const spotifyData = await response.json();
         console.log('✅ Spotify data received:', spotifyData);
+        console.log('📊 Full Spotify Response:', JSON.stringify(spotifyData, null, 2));
         
-        // Extract title and artist from the title string (format: "Song Title by Artist Name")
+        // Extract title and artist from the title string
         const fullTitle = spotifyData.title || '';
-        const splitIndex = fullTitle.lastIndexOf(' by ');
+        console.log('📝 Full title from API:', fullTitle);
         
         let songTitle = '';
         let songArtist = '';
         
-        if (splitIndex > -1) {
-          songTitle = fullTitle.substring(0, splitIndex).trim();
-          songArtist = fullTitle.substring(splitIndex + 4).trim();
-        } else {
-          songTitle = fullTitle.trim();
+        // Try multiple parsing strategies
+        // Strategy 1: Look for " by " separator (most common)
+        const byIndex = fullTitle.lastIndexOf(' by ');
+        if (byIndex > -1) {
+          songTitle = fullTitle.substring(0, byIndex).trim();
+          songArtist = fullTitle.substring(byIndex + 4).trim();
+          console.log('✅ Strategy 1 (by): Title:', songTitle, '| Artist:', songArtist);
+        } 
+        // Strategy 2: Look for " - " separator (alternative format)
+        else {
+          const dashIndex = fullTitle.indexOf(' - ');
+          if (dashIndex > -1) {
+            songArtist = fullTitle.substring(0, dashIndex).trim();
+            songTitle = fullTitle.substring(dashIndex + 3).trim();
+            console.log('✅ Strategy 2 (dash): Title:', songTitle, '| Artist:', songArtist);
+          } else {
+            // Strategy 3: Use the whole title
+            songTitle = fullTitle.trim();
+            songArtist = 'Unknown Artist';
+            console.log('⚠️ Strategy 3 (fallback): Title:', songTitle, '| Artist:', songArtist);
+          }
         }
         
-        console.log('🎵 Parsed - Title:', songTitle, '| Artist:', songArtist);
+        console.log('🎵 FINAL Parsed - Title:', songTitle, '| Artist:', songArtist);
         
         // Force update with new data
         setData(prev => {
