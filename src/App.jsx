@@ -195,37 +195,64 @@ export default function App() {
         console.log('✅ Spotify data received:', spotifyData);
         console.log('📊 Full Spotify Response:', JSON.stringify(spotifyData, null, 2));
         
-        // Extract title and artist from the title string
-        const fullTitle = spotifyData.title || '';
-        console.log('📝 Full title from API:', fullTitle);
+        // Extract title and artist from the response
+        let songTitle = spotifyData.title || '';
+        let songArtist = spotifyData.author_name || '';
         
-        let songTitle = '';
-        let songArtist = '';
+        console.log('📝 Title from API:', songTitle);
+        console.log('👤 Author from API:', songArtist);
         
-        // Try multiple parsing strategies
-        // Strategy 1: Look for " by " separator (most common)
-        const byIndex = fullTitle.lastIndexOf(' by ');
-        if (byIndex > -1) {
-          songTitle = fullTitle.substring(0, byIndex).trim();
-          songArtist = fullTitle.substring(byIndex + 4).trim();
-          console.log('✅ Strategy 1 (by): Title:', songTitle, '| Artist:', songArtist);
-        } 
-        // Strategy 2: Look for " - " separator (alternative format)
-        else {
-          const dashIndex = fullTitle.indexOf(' - ');
-          if (dashIndex > -1) {
-            songArtist = fullTitle.substring(0, dashIndex).trim();
-            songTitle = fullTitle.substring(dashIndex + 3).trim();
-            console.log('✅ Strategy 2 (dash): Title:', songTitle, '| Artist:', songArtist);
-          } else {
-            // Strategy 3: Use the whole title
-            songTitle = fullTitle.trim();
-            songArtist = 'Unknown Artist';
-            console.log('⚠️ Strategy 3 (fallback): Title:', songTitle, '| Artist:', songArtist);
+        // If author_name is empty, try parsing from iframe HTML
+        if (!songArtist && spotifyData.html) {
+          console.log('⚠️ No author_name, trying to parse from iframe HTML...');
+          const iframeHTML = spotifyData.html;
+          console.log('🔍 iframe HTML:', iframeHTML);
+          
+          // Try to extract from iframe title attribute
+          const titleMatch = iframeHTML.match(/title="([^"]+)"/);
+          if (titleMatch && titleMatch[1]) {
+            const iframeTitle = titleMatch[1];
+            console.log('📺 iframe title found:', iframeTitle);
+            
+            // Format is usually "Spotify Embed: Song Title" or similar
+            // Try to extract artist from iframe title
+            if (iframeTitle.includes(' by ')) {
+              const parts = iframeTitle.split(' by ');
+              if (parts.length === 2) {
+                songArtist = parts[1].trim();
+                console.log('✅ Artist extracted from iframe:', songArtist);
+              }
+            }
           }
         }
         
-        console.log('🎵 FINAL Parsed - Title:', songTitle, '| Artist:', songArtist);
+        // If still no artist, try parsing from title field
+        if (!songArtist && songTitle) {
+          console.log('⚠️ Still no artist, trying to parse from title field...');
+          
+          // Try parsing "Title by Artist" format
+          const byIndex = songTitle.lastIndexOf(' by ');
+          if (byIndex > -1) {
+            const parsedTitle = songTitle.substring(0, byIndex).trim();
+            const parsedArtist = songTitle.substring(byIndex + 4).trim();
+            songTitle = parsedTitle;
+            songArtist = parsedArtist;
+            console.log('✅ Parsed from title - Title:', songTitle, '| Artist:', songArtist);
+          } 
+          // Try parsing "Artist - Title" format
+          else {
+            const dashIndex = songTitle.indexOf(' - ');
+            if (dashIndex > -1) {
+              const parsedArtist = songTitle.substring(0, dashIndex).trim();
+              const parsedTitle = songTitle.substring(dashIndex + 3).trim();
+              songTitle = parsedTitle;
+              songArtist = parsedArtist;
+              console.log('✅ Parsed from title (dash) - Title:', songTitle, '| Artist:', songArtist);
+            }
+          }
+        }
+        
+        console.log('🎵 FINAL - Title:', songTitle || 'Unknown Track', '| Artist:', songArtist || 'Unknown Artist');
         
         // Force update with new data
         setData(prev => {
