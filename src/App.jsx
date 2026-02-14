@@ -254,13 +254,18 @@ export default function App() {
         
         console.log('🎵 FINAL - Title:', songTitle || 'Unknown Track', '| Artist:', songArtist || 'Unknown Artist');
         
+        // Show notification if artist is not detected
+        if (!songArtist) {
+          console.log('⚠️ Artist not detected from Spotify - user can input manually');
+        }
+        
         // Force update with new data
         setData(prev => {
           const newData = {
             ...prev,
             spotifyLink: link,
             songTitle: songTitle || 'Unknown Track',
-            songArtist: songArtist || 'Unknown Artist',
+            songArtist: songArtist || '', // Empty string instead of "Unknown Artist" for manual input
             songThumbnail: spotifyData.thumbnail_url || ''
           };
           console.log('🔄 State updated with:', newData);
@@ -696,17 +701,52 @@ export default function App() {
                    {isLoadingSpotify && (
                      <div className="text-xs text-gray-500 italic">Loading track info...</div>
                    )}
-                   {!isLoadingSpotify && data.songTitle && (
-                     <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-xl">
-                       {data.songThumbnail && (
-                         <img src={data.songThumbnail} alt="Album" className="w-12 h-12 rounded-lg object-cover" />
-                       )}
-                       <div className="flex-1 min-w-0">
-                         <div className="text-sm font-bold text-gray-800 truncate">{data.songTitle}</div>
-                         {data.songArtist && (
-                           <div className="text-xs text-gray-500 truncate">by {data.songArtist}</div>
+                   {!isLoadingSpotify && data.spotifyLink && (
+                     <div className="space-y-3">
+                       {/* Manual Song Title Input */}
+                       <div>
+                         <label className="text-xs text-gray-500 font-medium mb-1 block">Song Title</label>
+                         <input
+                           name="songTitle"
+                           value={data.songTitle}
+                           onChange={handleInputChange}
+                           placeholder="Enter song title"
+                           className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all"
+                         />
+                       </div>
+                       
+                       {/* Manual Artist Name Input */}
+                       <div>
+                         <label className="text-xs text-gray-500 font-medium mb-1 block">Artist Name</label>
+                         <input
+                           name="songArtist"
+                           value={data.songArtist}
+                           onChange={handleInputChange}
+                           placeholder="Enter artist name"
+                           className={`w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 transition-all ${
+                             !data.songArtist ? 'border-yellow-300 focus:ring-yellow-400' : 'focus:ring-gray-300'
+                           }`}
+                         />
+                         {!data.songArtist && (
+                           <p className="text-xs text-yellow-600 mt-1 flex items-center gap-1">
+                             <span>⚠️</span> Artist not detected - please enter manually
+                           </p>
                          )}
                        </div>
+                       
+                       {/* Preview Card */}
+                       {(data.songTitle || data.songArtist) && (
+                         <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300">
+                           {data.songThumbnail && (
+                             <img src={data.songThumbnail} alt="Album" className="w-12 h-12 rounded-lg object-cover" />
+                           )}
+                           <div className="flex-1 min-w-0">
+                             <div className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Preview</div>
+                             <div className="text-sm font-bold text-gray-800 truncate">{data.songTitle || 'No title'}</div>
+                             <div className="text-xs text-gray-500 truncate">{data.songArtist || 'No artist'}</div>
+                           </div>
+                         </div>
+                       )}
                      </div>
                    )}
                 </div>
