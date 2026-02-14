@@ -373,14 +373,14 @@ export default function App() {
 
   // --- The Card Component ---
   const BioCard = () => (
-    <div className="w-full max-w-6xl mx-auto bg-gray-50 rounded-[40px] shadow-2xl overflow-hidden p-3 md:p-5 font-sans text-gray-800 transition-all duration-500 relative">
+    <div className="w-full max-w-6xl mx-auto bg-gray-50 rounded-[40px] shadow-2xl overflow-hidden p-3 md:p-5 font-sans text-gray-800 transition-all duration-500 relative scale-[0.85] md:scale-100 origin-top">
       
       <div className="absolute top-8 left-8 z-10 hidden lg:block opacity-30">
         <div className="text-3xl font-black italic tracking-tighter text-gray-800 select-none">SCD</div>
         <div className="text-[10px] font-bold tracking-widest uppercase mt-1">Profile</div>
       </div>
 
-      <div className="flex flex-col lg:grid lg:grid-cols-[100px_1fr_350px] gap-4 md:gap-6 lg:gap-8 min-h-[600px]">
+      <div className="flex flex-col lg:grid lg:grid-cols-[100px_1fr_350px] gap-3 md:gap-6 lg:gap-8 min-h-0 md:min-h-[600px]">
         
         <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-3 px-4 lg:py-8 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-[32px] overflow-x-auto lg:overflow-hidden h-full">
           <div className="flex lg:flex-col gap-6 md:gap-10 text-gray-400 mr-8 lg:mr-0 lg:mt-16">
@@ -476,9 +476,9 @@ export default function App() {
 
         <div className="order-2 lg:order-3 flex flex-col gap-4 lg:gap-6 h-full">
           
-          <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100/50">
-             <div className="flex items-start justify-between mb-4">
-                <h3 className="font-bold text-gray-800 text-xl">Hometown</h3>
+          <div className="bg-white rounded-[32px] p-4 md:p-6 shadow-sm border border-gray-100/50">
+             <div className="flex items-start justify-between mb-3 md:mb-4">
+                <h3 className="font-bold text-gray-800 text-lg md:text-xl">Hometown</h3>
                 <div className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                    <MapPin size={12} /> {data.hometown}
                 </div>
@@ -491,27 +491,27 @@ export default function App() {
              </div>
           </div>
 
-          <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100/50 flex flex-col justify-center relative overflow-hidden group">
+          <div className="bg-white rounded-[32px] p-4 md:p-6 shadow-sm border border-gray-100/50 flex flex-col justify-center relative overflow-hidden group">
              <div className={`absolute -right-10 -top-10 w-40 h-40 ${theme.soft} rounded-full opacity-50`}></div>
              
-             <div className="flex items-center gap-5 relative z-10">
+             <div className="flex items-center gap-3 md:gap-5 relative z-10">
                 {data.songThumbnail ? (
-                  <div className="w-16 h-16 flex-shrink-0 rounded-2xl overflow-hidden shadow-md">
+                  <div className="w-12 h-12 md:w-16 md:h-16 flex-shrink-0 rounded-2xl overflow-hidden shadow-md">
                     <img src={data.songThumbnail} alt="Album art" className="w-full h-full object-cover" />
                   </div>
                 ) : (
-                  <div className={`w-16 h-16 flex-shrink-0 ${theme.soft} rounded-2xl flex items-center justify-center`}>
-                    <Music className={theme.text} size={32} />
+                  <div className={`w-12 h-12 md:w-16 md:h-16 flex-shrink-0 ${theme.soft} rounded-2xl flex items-center justify-center`}>
+                    <Music className={theme.text} size={24} />
                   </div>
                 )}
                 <div className="flex-1 overflow-hidden">
-                   <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                   <div className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
                      {data.songTitle || 'Music'}
                    </div>
-                   <div className="text-base font-bold text-gray-800 truncate">
+                   <div className="text-sm md:text-base font-bold text-gray-800 truncate">
                      {data.songArtist || 'Add your favorite song'}
                    </div>
-                   <div className="flex items-end gap-0.5 h-4 mt-2 opacity-60">
+                   <div className="flex items-end gap-0.5 h-3 md:h-4 mt-1 md:mt-2 opacity-60">
                      {[...Array(16)].map((_, i) => (
                        <div key={i} className={`w-1 rounded-full ${theme.primary} transition-all duration-300`} style={{height: `${Math.max(20, Math.random() * 100)}%`}}></div>
                      ))}
@@ -522,20 +522,20 @@ export default function App() {
                     href={data.spotifyLink} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className={`w-12 h-12 rounded-full ${theme.soft} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-sm`}
+                    className={`w-10 h-10 md:w-12 md:h-12 rounded-full ${theme.soft} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-sm`}
                   >
-                    <Play size={18} className={`ml-1 ${theme.text}`} fill="currentColor" />
+                    <Play size={16} className={`ml-0.5 ${theme.text}`} fill="currentColor" />
                   </a>
                 ) : (
-                  <div className={`w-12 h-12 rounded-full ${theme.soft} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-sm opacity-50`}>
-                    <Play size={18} className={`ml-1 ${theme.text}`} fill="currentColor" />
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full ${theme.soft} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-sm opacity-50`}>
+                    <Play size={16} className={`ml-0.5 ${theme.text}`} fill="currentColor" />
                   </div>
                 )}
              </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 lg:gap-6 flex-1 min-h-[180px]">
-             <div className={`bg-gray-100 rounded-[32px] p-5 flex flex-col justify-between relative overflow-hidden`}>
+          <div className="grid grid-cols-2 gap-3 md:gap-4 lg:gap-6 flex-1 min-h-[140px] md:min-h-[180px]">
+             <div className={`bg-gray-100 rounded-[32px] p-4 md:p-5 flex flex-col justify-between relative overflow-hidden`}>
                 <div className="text-xs text-gray-500 font-bold uppercase z-10">Active Since</div>
                 <div className="text-4xl font-black text-gray-800 z-10">{data.yearsActiveStart}</div>
                 <div className={`self-end p-3 rounded-full bg-white text-${theme.text} shadow-sm z-10`}>
@@ -596,7 +596,7 @@ export default function App() {
                  </span>
                  <span className="text-xs text-gray-400 hidden md:inline">Scale window to test responsiveness</span>
                </div>
-               <div className="transform transition-all duration-500">
+               <div className="transform transition-all duration-500 h-[calc(100vh-180px)] md:h-auto overflow-y-auto md:overflow-visible">
                  <BioCard />
                </div>
              </div>
