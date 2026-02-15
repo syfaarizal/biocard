@@ -115,16 +115,65 @@ const THEMES = {
 // --- Main Application Component ---
 export default function App() {
   const [data, setData] = useState(INITIAL_DATA);
-  const [viewMode, setViewMode] = useState('edit'); // 'edit' or 'published'
+  const [viewMode, setViewMode] = useState('edit'); // 'edit', 'published', or 'view'
   const [isCopied, setIsCopied] = useState(false);
   const [isLoadingSpotify, setIsLoadingSpotify] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
+  // Encode data to URL-safe string
+  const encodeData = (dataObj) => {
+    try {
+      const jsonString = JSON.stringify(dataObj);
+      return btoa(encodeURIComponent(jsonString));
+    } catch (error) {
+      console.error('Failed to encode data:', error);
+      return '';
+    }
+  };
+
+  // Decode data from URL
+  const decodeData = (encodedString) => {
+    try {
+      const jsonString = decodeURIComponent(atob(encodedString));
+      return JSON.parse(jsonString);
+    } catch (error) {
+      console.error('Failed to decode data:', error);
+      return null;
+    }
+  };
+
+  // Initialize app: check URL and load data
   useEffect(() => {
+    const hash = window.location.hash;
+    console.log('🔍 Current URL hash:', hash);
+
+    // Parse URL to detect mode
+    if (hash.includes('/p/') || hash.includes('/v/')) {
+      // Published or View mode - load data from URL
+      const isViewMode = hash.includes('/v/');
+      const mode = isViewMode ? 'view' : 'published';
+      
+      // Extract data parameter
+      const urlParams = new URLSearchParams(hash.split('?')[1]);
+      const encodedData = urlParams.get('data');
+      
+      if (encodedData) {
+        const decodedData = decodeData(encodedData);
+        if (decodedData) {
+          console.log('✅ Loaded data from URL:', decodedData);
+          setData(decodedData);
+          setViewMode(mode);
+          return;
+        }
+      }
+    }
+    
+    // Default: Edit mode - load from localStorage
     const savedData = localStorage.getItem('biocard_data');
     if (savedData) {
       setData(JSON.parse(savedData));
     }
+    setViewMode('edit');
   }, []);
 
   const handleInputChange = (e) => {
@@ -315,7 +364,17 @@ export default function App() {
 
   const saveAndPublish = () => {
     try {
+      console.log('💾 Publishing card...');
       localStorage.setItem('biocard_data', JSON.stringify(data));
+      
+      // Encode data and create published URL
+      const encodedData = encodeData(data);
+      const publishedUrl = `#/p/${data.username}?data=${encodedData}`;
+      
+      console.log('✅ Published URL:', publishedUrl);
+      
+      // Navigate to published mode
+      window.location.hash = publishedUrl;
       setViewMode('published');
       window.scrollTo(0, 0);
     } catch (error) {
@@ -325,15 +384,22 @@ export default function App() {
   };
 
   const handleEditClick = () => {
+    console.log('✏️ Switching to edit mode...');
+    window.location.hash = '#/edit';
     setViewMode('edit');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const copyLink = () => {
-    const fakeUrl = `biocard.app/${data.username}`;
-    navigator.clipboard.writeText(fakeUrl);
+    // Generate view-only link (no edit button)
+    const encodedData = encodeData(data);
+    const viewUrl = `${window.location.origin}${window.location.pathname}#/v/${data.username}?data=${encodedData}`;
+    
+    console.log('📋 Copying view link:', viewUrl);
+    
+    navigator.clipboard.writeText(viewUrl);
     setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    setTimeout(() => setIsCopied(false), 3000);
   };
 
   const theme = THEMES[data.themeColor];
@@ -871,9 +937,13 @@ export default function App() {
             onClick={copyLink}
             className="w-full flex-1 bg-gray-900 rounded-lg px-4 py-3 md:py-1.5 text-xs text-gray-400 font-mono flex justify-between items-center group cursor-pointer active:scale-95 transition-transform"
          >
-            <span className="truncate max-w-[200px] md:max-w-none">biocard.app/<span className="text-white">{data.username}</span></span>
+            <span className="truncate max-w-[200px] md:max-w-none">
+              biocard.app/{viewMode === 'view' ? 'v/' : ''}<span className="text-white">{data.username}</span>
+            </span>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] uppercase font-bold text-gray-600 group-hover:text-gray-400 hidden md:block">Click to Copy</span>
+              <span className="text-[10px] uppercase font-bold text-gray-600 group-hover:text-gray-400 hidden md:block">
+                {isCopied ? 'Copied!' : 'Click to Copy'}
+              </span>
               {isCopied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
             </div>
          </div>
@@ -883,12 +953,17 @@ export default function App() {
          <BioCard />
          
          <div className="mt-12 mb-8 flex flex-col md:flex-row justify-center gap-4">
-            <button 
-              onClick={() => setViewMode('edit')}
-              className="px-8 py-4 bg-white text-gray-900 rounded-full font-bold shadow-xl hover:bg-gray-50 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
-            >
-              <Edit3 size={18} /> Edit This Card
-            </button>
+            {/* Edit Button - Only visible in PUBLISHED mode, hidden in VIEW mode */}
+            {viewMode === 'published' && (
+              <button 
+                onClick={handleEditClick}
+                className="px-8 py-4 bg-white text-gray-900 rounded-full font-bold shadow-xl hover:bg-gray-50 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+              >
+                <Edit3 size={18} /> Edit This Card
+              </button>
+            )}
+            
+            {/* Share Profile Button - Always visible in both PUBLISHED and VIEW mode */}
             <button 
               onClick={copyLink}
               className={`px-8 py-4 ${theme.primary} text-white rounded-full font-bold shadow-xl hover:brightness-110 hover:-translate-y-1 transition-all flex items-center justify-center gap-2`}
@@ -900,7 +975,8 @@ export default function App() {
 
       {isCopied && (
         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 animate-bounce z-50 whitespace-nowrap">
-          <Check size={18} className="text-green-400" /> Link Copied!
+          <Check size={18} className="text-green-400" /> 
+          {viewMode === 'view' ? 'Share link copied!' : 'View link copied! Share it with others'}
         </div>
       )}
 
