@@ -373,16 +373,16 @@ export default function App() {
 
   // --- The Card Component ---
   const BioCard = () => (
-    <div className="w-full max-w-6xl mx-auto bg-gray-50 rounded-[40px] shadow-2xl overflow-hidden p-3 md:p-5 font-sans text-gray-800 transition-all duration-500 relative scale-[0.85] md:scale-100 origin-top">
+    <div className="w-full max-w-6xl mx-auto bg-gray-50 rounded-[24px] md:rounded-[40px] shadow-2xl overflow-hidden p-2 md:p-5 font-sans text-gray-800 transition-all duration-500 relative">
       
       <div className="absolute top-8 left-8 z-10 hidden lg:block opacity-30">
         <div className="text-3xl font-black italic tracking-tighter text-gray-800 select-none">SCD</div>
         <div className="text-[10px] font-bold tracking-widest uppercase mt-1">Profile</div>
       </div>
 
-      <div className="flex flex-col lg:grid lg:grid-cols-[100px_1fr_350px] gap-3 md:gap-6 lg:gap-8 min-h-0 md:min-h-[600px]">
+      <div className="flex flex-col lg:grid lg:grid-cols-[100px_1fr_350px] gap-2 md:gap-6 lg:gap-8 min-h-0 md:min-h-[600px]">
         
-        <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-3 px-4 lg:py-8 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-[32px] overflow-x-auto lg:overflow-hidden h-full">
+        <div className="order-3 lg:order-1 flex lg:flex-col items-center justify-between py-2 px-3 lg:py-8 lg:px-4 bg-gray-200/50 lg:bg-gray-100/50 rounded-2xl lg:rounded-[32px] overflow-x-auto lg:overflow-hidden h-full">
           <div className="flex lg:flex-col gap-6 md:gap-10 text-gray-400 mr-8 lg:mr-0 lg:mt-16">
             <Home className="hover:text-gray-800 cursor-pointer transition-colors mt-2" size={24} />
             <div className={`hidden lg:block relative ${theme.text}`}>
@@ -416,7 +416,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="order-1 lg:order-2 relative rounded-[32px] lg:rounded-[40px] overflow-hidden group min-h-[500px] shadow-sm">
+        <div className="order-1 lg:order-2 relative rounded-[24px] lg:rounded-[40px] overflow-hidden group min-h-[320px] md:min-h-[500px] shadow-sm">
           <div className="absolute inset-0 bg-gray-200">
              <img 
                src={data.heroImage} 
@@ -476,22 +476,22 @@ export default function App() {
 
         <div className="order-2 lg:order-3 flex flex-col gap-4 lg:gap-6 h-full">
           
-          <div className="bg-white rounded-[32px] p-4 md:p-6 shadow-sm border border-gray-100/50">
-             <div className="flex items-start justify-between mb-3 md:mb-4">
-                <h3 className="font-bold text-gray-800 text-lg md:text-xl">Hometown</h3>
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                   <MapPin size={12} /> {data.hometown}
+          <div className="bg-white rounded-[20px] md:rounded-[32px] p-3 md:p-6 shadow-sm border border-gray-100/50">
+             <div className="flex items-start justify-between mb-2 md:mb-4">
+                <h3 className="font-bold text-gray-800 text-base md:text-xl">Hometown</h3>
+                <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-gray-500 bg-gray-100 px-2 md:px-3 py-1 rounded-full">
+                   <MapPin size={10} className="md:w-3 md:h-3" /> {data.hometown}
                 </div>
              </div>
-             <div className="flex flex-wrap gap-2">
-                <span className="px-4 py-1.5 bg-gray-900 text-white rounded-full text-xs font-bold tracking-wide">{data.role}</span>
+             <div className="flex flex-wrap gap-1.5 md:gap-2">
+                <span className="px-3 md:px-4 py-1 md:py-1.5 bg-gray-900 text-white rounded-full text-[10px] md:text-xs font-bold tracking-wide">{data.role}</span>
                 {data.tags.split(',').map((tag, i) => (
-                  <span key={i} className="px-4 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200 rounded-full text-xs font-medium transition-colors cursor-default">{tag.trim()}</span>
+                  <span key={i} className="px-3 md:px-4 py-1 md:py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200 rounded-full text-[10px] md:text-xs font-medium transition-colors cursor-default">{tag.trim()}</span>
                 ))}
              </div>
           </div>
 
-          <div className="bg-white rounded-[32px] p-4 md:p-6 shadow-sm border border-gray-100/50 flex flex-col justify-center relative overflow-hidden group">
+          <div className="bg-white rounded-[20px] md:rounded-[32px] p-3 md:p-6 shadow-sm border border-gray-100/50 flex flex-col justify-center relative overflow-hidden group">
              <div className={`absolute -right-10 -top-10 w-40 h-40 ${theme.soft} rounded-full opacity-50`}></div>
              
              <div className="flex items-center gap-3 md:gap-5 relative z-10">
@@ -534,22 +534,22 @@ export default function App() {
              </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 md:gap-4 lg:gap-6 flex-1 min-h-[140px] md:min-h-[180px]">
-             <div className={`bg-gray-100 rounded-[32px] p-4 md:p-5 flex flex-col justify-between relative overflow-hidden`}>
-                <div className="text-xs text-gray-500 font-bold uppercase z-10">Active Since</div>
-                <div className="text-4xl font-black text-gray-800 z-10">{data.yearsActiveStart}</div>
-                <div className={`self-end p-3 rounded-full bg-white text-${theme.text} shadow-sm z-10`}>
-                   <Calendar size={18} className={theme.text} />
+          <div className="grid grid-cols-2 gap-2 md:gap-4 lg:gap-6 flex-1 min-h-[100px] md:min-h-[180px]">
+             <div className={`bg-gray-100 rounded-[20px] md:rounded-[32px] p-3 md:p-5 flex flex-col justify-between relative overflow-hidden`}>
+                <div className="text-[10px] md:text-xs text-gray-500 font-bold uppercase z-10">Active Since</div>
+                <div className="text-2xl md:text-4xl font-black text-gray-800 z-10">{data.yearsActiveStart}</div>
+                <div className={`self-end p-2 md:p-3 rounded-full bg-white text-${theme.text} shadow-sm z-10`}>
+                   <Calendar size={14} className={`${theme.text} md:w-[18px] md:h-[18px]`} />
                 </div>
-                <Calendar size={100} className="absolute -bottom-4 -left-4 text-gray-200/50 rotate-12" />
+                <Calendar size={60} className="absolute -bottom-2 -left-2 text-gray-200/50 rotate-12 md:w-[100px] md:h-[100px] md:-bottom-4 md:-left-4" />
              </div>
 
-             <div className="bg-white rounded-[32px] p-2 shadow-sm border border-gray-100/50 overflow-hidden relative group cursor-pointer">
-                <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold text-gray-600 shadow-sm flex items-center gap-1">
+             <div className="bg-white rounded-[20px] md:rounded-[32px] p-1.5 md:p-2 shadow-sm border border-gray-100/50 overflow-hidden relative group cursor-pointer">
+                <div className="absolute top-2 left-2 md:top-4 md:left-4 z-10 bg-white/90 backdrop-blur-sm px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] font-bold text-gray-600 shadow-sm flex items-center gap-1">
                    Gallery
                 </div>
-                <img src={data.secondaryImage} className="w-full h-full object-cover rounded-[24px] group-hover:scale-110 transition-transform duration-700" alt="Gallery" />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-[24px]"></div>
+                <img src={data.secondaryImage} className="w-full h-full object-cover rounded-[16px] md:rounded-[24px] group-hover:scale-110 transition-transform duration-700" alt="Gallery" />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-[16px] md:rounded-[24px]"></div>
              </div>
           </div>
 
@@ -563,10 +563,10 @@ export default function App() {
     return (
       <div className="min-h-screen bg-gray-200 p-2 md:p-8 font-sans">
         
-        <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-6 md:mb-8 gap-4 pt-4 md:pt-0">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 ${theme.primary} rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md`}>B</div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800">BioCard Creator</h1>
+        <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-3 md:mb-8 gap-3 md:gap-4 pt-2 md:pt-0">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className={`w-8 h-8 md:w-10 md:h-10 ${theme.primary} rounded-xl flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-md`}>B</div>
+            <h1 className="text-lg md:text-2xl font-bold text-gray-800">BioCard Creator</h1>
           </div>
           <div className="flex w-full md:w-auto gap-2">
             <button 
@@ -586,17 +586,17 @@ export default function App() {
           </div>
         </header>
 
-        <div className="max-w-7xl mx-auto flex flex-col gap-8 pb-10">
+        <div className="max-w-7xl mx-auto flex flex-col gap-4 md:gap-8 pb-4 md:pb-10 px-2 md:px-6">
           
           <div className="order-1">
-             <div className="space-y-4">
-               <div className="flex items-center justify-between px-2">
-                 <span className="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+             <div className="space-y-2 md:space-y-4">
+               <div className="flex items-center justify-between px-1 md:px-2">
+                 <span className="text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div> Live Preview
                  </span>
                  <span className="text-xs text-gray-400 hidden md:inline">Scale window to test responsiveness</span>
                </div>
-               <div className="transform transition-all duration-500 h-[calc(100vh-180px)] md:h-auto overflow-y-auto md:overflow-visible">
+               <div className="transform transition-all duration-500 overflow-y-auto md:overflow-visible">
                  <BioCard />
                </div>
              </div>
