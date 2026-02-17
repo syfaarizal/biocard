@@ -125,8 +125,7 @@ export default function App() {
     try {
       const jsonString = JSON.stringify(dataObj);
       return btoa(encodeURIComponent(jsonString));
-    } catch (error) {
-      console.error('Failed to encode data:', error);
+    } catch {
       return '';
     }
   };
@@ -136,8 +135,7 @@ export default function App() {
     try {
       const jsonString = decodeURIComponent(atob(encodedString));
       return JSON.parse(jsonString);
-    } catch (error) {
-      console.error('Failed to decode data:', error);
+    } catch {
       return null;
     }
   };
@@ -145,7 +143,6 @@ export default function App() {
   // Initialize app: check URL and load data
   useEffect(() => {
     const hash = window.location.hash;
-    console.log('🔍 Current URL hash:', hash);
 
     // Parse URL to detect mode
     if (hash.includes('/p/') || hash.includes('/v/')) {
@@ -160,7 +157,6 @@ export default function App() {
       if (encodedData) {
         const decodedData = decodeData(encodedData);
         if (decodedData) {
-          console.log('✅ Loaded data from URL:', decodedData);
           setData(decodedData);
           setViewMode(mode);
           return;
@@ -219,7 +215,6 @@ export default function App() {
   };
 
   const handleSpotifyLink = async (e) => {
-    console.log('⚡ handleSpotifyLink CALLED! Event:', e.target.value);
     
     const link = e.target.value;
     
@@ -227,41 +222,31 @@ export default function App() {
     setData(prev => ({ ...prev, spotifyLink: link }));
     setIsSaved(false);
 
-    console.log('📝 Link updated to:', link);
 
     // Check if it's a valid Spotify track link (support all formats including regional)
     const isSpotifyTrack = link.includes('open.spotify.com') && link.includes('/track/');
     
     if (isSpotifyTrack) {
-      console.log('✅ Valid Spotify link detected!');
       setIsLoadingSpotify(true);
       try {
-        console.log('🎵 Fetching Spotify data for:', link);
         const response = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(link)}`);
         if (!response.ok) throw new Error('Failed to fetch Spotify data');
         
         const spotifyData = await response.json();
-        console.log('✅ Spotify data received:', spotifyData);
-        console.log('📊 Full Spotify Response:', JSON.stringify(spotifyData, null, 2));
         
         // Extract title and artist from the response
         let songTitle = spotifyData.title || '';
         let songArtist = spotifyData.author_name || '';
         
-        console.log('📝 Title from API:', songTitle);
-        console.log('👤 Author from API:', songArtist);
         
         // If author_name is empty, try parsing from iframe HTML
         if (!songArtist && spotifyData.html) {
-          console.log('⚠️ No author_name, trying to parse from iframe HTML...');
           const iframeHTML = spotifyData.html;
-          console.log('🔍 iframe HTML:', iframeHTML);
           
           // Try to extract from iframe title attribute
           const titleMatch = iframeHTML.match(/title="([^"]+)"/);
           if (titleMatch && titleMatch[1]) {
             const iframeTitle = titleMatch[1];
-            console.log('📺 iframe title found:', iframeTitle);
             
             // Format is usually "Spotify Embed: Song Title" or similar
             // Try to extract artist from iframe title
@@ -269,7 +254,6 @@ export default function App() {
               const parts = iframeTitle.split(' by ');
               if (parts.length === 2) {
                 songArtist = parts[1].trim();
-                console.log('✅ Artist extracted from iframe:', songArtist);
               }
             }
           }
@@ -277,7 +261,6 @@ export default function App() {
         
         // If still no artist, try parsing from title field
         if (!songArtist && songTitle) {
-          console.log('⚠️ Still no artist, trying to parse from title field...');
           
           // Try parsing "Title by Artist" format
           const byIndex = songTitle.lastIndexOf(' by ');
@@ -286,7 +269,6 @@ export default function App() {
             const parsedArtist = songTitle.substring(byIndex + 4).trim();
             songTitle = parsedTitle;
             songArtist = parsedArtist;
-            console.log('✅ Parsed from title - Title:', songTitle, '| Artist:', songArtist);
           } 
           // Try parsing "Artist - Title" format
           else {
@@ -296,16 +278,8 @@ export default function App() {
               const parsedTitle = songTitle.substring(dashIndex + 3).trim();
               songTitle = parsedTitle;
               songArtist = parsedArtist;
-              console.log('✅ Parsed from title (dash) - Title:', songTitle, '| Artist:', songArtist);
             }
           }
-        }
-        
-        console.log('🎵 FINAL - Title:', songTitle || 'Unknown Track', '| Artist:', songArtist || 'Unknown Artist');
-        
-        // Show notification if artist is not detected
-        if (!songArtist) {
-          console.log('⚠️ Artist not detected from Spotify - user can input manually');
         }
         
         // Force update with new data
@@ -317,20 +291,16 @@ export default function App() {
             songArtist: songArtist || '', // Empty string instead of "Unknown Artist" for manual input
             songThumbnail: spotifyData.thumbnail_url || ''
           };
-          console.log('🔄 State updated with:', newData);
           return newData;
         });
         
         setIsLoadingSpotify(false);
-        console.log('✅ Spotify update complete!');
-      } catch (error) {
-        console.error('❌ Failed to fetch Spotify data:', error);
+      } catch {
         alert('Failed to load Spotify track. Please check the link and try again.');
         setIsLoadingSpotify(false);
       }
     } else if (link === '') {
       // Reset to default if link is cleared
-      console.log('🔄 Clearing Spotify data');
       setData(prev => ({ 
         ...prev,
         spotifyLink: '',
@@ -338,9 +308,6 @@ export default function App() {
         songArtist: '',
         songThumbnail: ''
       }));
-    } else {
-      console.log('⚠️ Not a valid Spotify track link:', link);
-      console.log('💡 Link should contain "open.spotify.com" and "/track/"');
     }
   };
 
@@ -351,40 +318,33 @@ export default function App() {
 
   const handleSaveChanges = () => {
     try {
-      console.log('💾 Saving data:', data);
       localStorage.setItem('biocard_data', JSON.stringify(data));
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000); // Hide after 3 seconds
-      console.log('✅ Data saved successfully!');
-    } catch (error) {
-      console.error('❌ Failed to save data:', error);
+    } catch {
       alert('Failed to save changes. Images might be too large.');
     }
   };
 
   const saveAndPublish = () => {
     try {
-      console.log('💾 Publishing card...');
       localStorage.setItem('biocard_data', JSON.stringify(data));
       
       // Encode data and create published URL
       const encodedData = encodeData(data);
       const publishedUrl = `#/p/${data.username}?data=${encodedData}`;
       
-      console.log('✅ Published URL:', publishedUrl);
       
       // Navigate to published mode
       window.location.hash = publishedUrl;
       setViewMode('published');
       window.scrollTo(0, 0);
-    } catch (error) {
-      console.error('Failed to save data:', error);
+    } catch {
       alert('Failed to save data. Images might be too large. Please try with smaller images.');
     }
   };
 
   const handleEditClick = () => {
-    console.log('✏️ Switching to edit mode...');
     window.location.hash = '#/edit';
     setViewMode('edit');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -395,7 +355,6 @@ export default function App() {
     const encodedData = encodeData(data);
     const viewUrl = `${window.location.origin}${window.location.pathname}#/v/${data.username}?data=${encodedData}`;
     
-    console.log('📋 Copying view link:', viewUrl);
     
     navigator.clipboard.writeText(viewUrl);
     setIsCopied(true);
@@ -743,7 +702,6 @@ export default function App() {
                      {data.spotifyLink && !isLoadingSpotify && (
                        <button
                          onClick={() => {
-                           console.log('🧹 Clearing Spotify link');
                            setData(prev => ({ 
                              ...prev,
                              spotifyLink: '',
